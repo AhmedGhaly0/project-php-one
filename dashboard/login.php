@@ -8,7 +8,8 @@ if(isset($_POST['email'])){
   $email = $_POST['email'];
   $password = $_POST['password'];
 
-  $res = login($email,$password);
+  $res = new user();
+  $res->login($email,$password);
 
   
   

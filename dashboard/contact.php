@@ -3,27 +3,9 @@ session_start();
 
 require_once 'lib/portfolio.php';
  
-if (isset($_POST['desc'])) {
-//     echo '<pre>';
-// print_r($_FILES);die;
-$desc = $_POST['desc'];
-$tmp = $_FILES['img']['tmp_name'];
-$filename = $_FILES['img']['name'];
-$user_id = $_SESSION['user']['id'];
 
-
-move_uploaded_file($tmp,"Upload/".$filename);
-
-  $result =  AddNewPro($filename,$desc,$user_id);
-  if ($result) {
-    $success = 'Project Inserted';
-  }else{
-    $error= 'Project Not Inserted';
-
-  }
-
-}
-
+$data = new portfolio();
+$data->GitMessage();
 ?>
 
 <!-- form in line 253 -->
@@ -59,6 +41,9 @@ move_uploaded_file($tmp,"Upload/".$filename);
   <link rel="stylesheet" href="backassets/plugins/summernote/summernote-bs4.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="backassets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="backassets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -220,7 +205,7 @@ move_uploaded_file($tmp,"Upload/".$filename);
                 </a>
               </li>
               <li class="nav-item">
-                <a href="allPortfolio.php" class="nav-link">
+                <a href="allportfolio.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>View Data Portfolio </p>
                 </a>
@@ -228,7 +213,7 @@ move_uploaded_file($tmp,"Upload/".$filename);
               <li class="nav-item">
                 <a href="contact.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Contact </p>
+                  <p>Contact</p>
                 </a>
               </li>
             </ul>   
@@ -250,7 +235,7 @@ move_uploaded_file($tmp,"Upload/".$filename);
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-              <li class="breadcrumb-item active">Portfolio</li>
+              <li class="breadcrumb-item active">Contact</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -263,49 +248,39 @@ move_uploaded_file($tmp,"Upload/".$filename);
       <div class="container-fluid">
        
 
-      <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Quick Example</h3>
+           
+      <div class="card-body">
+                <table id="example2" class="table table-bordered table-hover">
+                  <thead>
+                  <tr>
+                    
+                    <th>Name</th>
+                    <th>Email Address</th>
+                    <th> Phone Number </th>
+                    <th>Message</th>
+                    
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php foreach($data as $val): ?>  
+                  <tr>
+                    <td><?=$val['name'];?></td>
+                    <td><?=$val['email'];?></td>
+                    <td><?=$val['phone'];  ?></td>
+                    <td><?=$val['message'];  ?></td>
+                  </th> 
+                  <?php endforeach; ?>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                  <th>Name</th>
+                    <th>Email Address</th>
+                    <th> Phone Number </th>
+                    <th>Message</th>
+                  </tr>
+                  </tfoot>
+                </table>
               </div>
-              <!-- /.card-header -->
-
-       <?php if (!empty($error) OR !empty($success)): ?>
-              <div class="alert <?php if(isset($success)): ?>alert-success<?php else: ?> alert-danger<?php endif; ?> alert-dismissible">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <h5><i></i> alert !</h5>
-               
-               <h3 class="text-center"><?php echo (isset($success)) ? $success : $error ; ?></h3>
-                </div>
-         <?php endif; ?> 
-              <!-- form start -->
-              <form role="form" action="Portfolio.php" method="post" enctype="multipart/form-data">
-                <div class="card-body">
-              
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Description</label>
-                    <textarea class="form-control textarea" name="desc" placeholder="Textarea"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputFile">Upload Img</label>
-                    <div class="input-group">
-                      <div class="custom-file">
-                        <input type="file" name="img" class="custom-file-input" id="exampleInputFile">
-                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                      </div>
-                      <div class="input-group-append">
-                        <span class="input-group-text" id="">Upload</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-              </form>
-            </div>
-
 
 
       </div><!-- /.container-fluid -->
@@ -370,6 +345,24 @@ move_uploaded_file($tmp,"Upload/".$filename);
 <script src="backassets/dist/js/adminlte.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="backassets/dist/js/pages/dashboard.js"></script>
+<!-- DataTables -->
+<script src="backassets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="backassets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="backassets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="backassets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script>
+  $(function () {
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
 <!-- AdminLTE for demo purposes -->
 <script src="backassets/dist/js/demo.js"></script>
 </body>

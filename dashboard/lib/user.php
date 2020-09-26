@@ -2,43 +2,55 @@
 
 
 
-function  AddNewUser($name,$email,$password){
-
-    // first connect
-
-    $connect = mysqli_connect("localhost","root","","proone");
 
 
-    // second query
+class user{
 
-    $sql = "INSERT INTO  `user` (`name`,`email`,`password`) VALUES ('$name','$email','$password')";
 
-    mysqli_query($connect,$sql);
+    function connect(){
+        return  mysqli_connect("localhost","root","","proone");
+      }
+
+    function  AddNewUser($name,$email,$password){
+
+        // first connect
     
-    $res = mysqli_affected_rows($connect);
-    if ($res == 1) {
         
-        return true;
-    }else{
-         return false;
+    
+    
+        // second query
+    
+        $sql = "INSERT INTO  `user` (`name`,`email`,`password`) VALUES ('$name','$email','$password')";
+    
+        mysqli_query($this->connect(),$sql);
+        
+        $res = mysqli_affected_rows($this->connect());
+        if ($res == 1) {
+            
+            return true;
+        }else{
+             return false;
+        }
     }
-}
+    
+    
+    function login($email,$password){
+    
+        // first connect
+        
+    
+    
+        // second query
+    
+        $mysql = " SELECT * FROM  `user` WHERE  `email` = '$email' && `password` = '$password' ";
+    
+    
+       $query = mysqli_query($this->connect(),$mysql);
+    
+        $res = mysqli_fetch_assoc($query);
+    
+        return $res;
+    }
+    
 
-
-function login($email,$password){
-
-    // first connect
-    $con = mysqli_connect("localhost","root","","proone");
-
-
-    // second query
-
-    $mysql = " SELECT * FROM  `user` WHERE  `email` = '$email' && `password` = '$password' ";
-
-
-   $query = mysqli_query($con,$mysql);
-
-    $res = mysqli_fetch_assoc($query);
-
-    return $res;
 }

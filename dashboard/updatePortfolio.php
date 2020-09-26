@@ -2,26 +2,47 @@
 session_start();
 
 require_once 'lib/portfolio.php';
- 
+
+
+$id = $_GET['proid'];
 if (isset($_POST['desc'])) {
-//     echo '<pre>';
-// print_r($_FILES);die;
+
+ 
+
+
+$res = new portfolio();
+$res->GitPortfolioById($id);
+
+
+$pro_id = $_POST['id'];
 $desc = $_POST['desc'];
-$tmp = $_FILES['img']['tmp_name'];
-$filename = $_FILES['img']['name'];
 $user_id = $_SESSION['user']['id'];
 
 
-move_uploaded_file($tmp,"Upload/".$filename);
+if (isset( $_FILES['img']['name'])) {
 
-  $result =  AddNewPro($filename,$desc,$user_id);
+  $tmp = $_FILES['img']['tmp_name'];
+$filename = $_FILES['img']['name'];
+move_uploaded_file($tmp,"Upload/".$filename);
+}else{
+  $filename = '';
+}
+
+  $result =  UpdatePro($pro_id,$desc,$filename);
   if ($result) {
-    $success = 'Project Inserted';
+header("LOCATION:allPortfolio.php");
   }else{
     $error= 'Project Not Inserted';
 
   }
 
+}else{
+  
+$id = $_GET['proid'];
+
+
+$res = new portfolio();
+$res->GitPortfolioById($id);
 }
 
 ?>
@@ -278,13 +299,15 @@ move_uploaded_file($tmp,"Upload/".$filename);
                 </div>
          <?php endif; ?> 
               <!-- form start -->
-              <form role="form" action="Portfolio.php" method="post" enctype="multipart/form-data">
+              <form role="form" action="updatePortfolio.php" method="post" enctype="multipart/form-data">
                 <div class="card-body">
               
                   <div class="form-group">
                     <label for="exampleInputPassword1">Description</label>
-                    <textarea class="form-control textarea" name="desc" placeholder="Textarea"></textarea>
+                    <textarea class="form-control textarea" name="desc" placeholder="Textarea"><?= $res['description']; ?></textarea>
                   </div>
+
+                  <img src="Upload/<?= $res['img']; ?>">
                   <div class="form-group">
                     <label for="exampleInputFile">Upload Img</label>
                     <div class="input-group">
@@ -295,13 +318,14 @@ move_uploaded_file($tmp,"Upload/".$filename);
                       <div class="input-group-append">
                         <span class="input-group-text" id="">Upload</span>
                       </div>
+                      <input type="hidden" name="id" value="<?= $id ?>">
                     </div>
                   </div>
                 
                 <!-- /.card-body -->
 
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" class="btn btn-primary">Update</button>
                 </div>
               </form>
             </div>
